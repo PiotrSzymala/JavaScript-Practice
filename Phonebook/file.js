@@ -1,7 +1,10 @@
-const contacts = []
-const contactList = document.getElementById("contactsList")
+let contacts = []
+
 
 document.getElementById("add-contact").addEventListener("click", addContact)
+document.getElementById("search").addEventListener("input", (event) => {
+    searchContact(event.target.value)
+})
 
 function addContact() {
     const name = document.getElementById("name").value
@@ -11,32 +14,57 @@ function addContact() {
         contacts.push({ "name": name, "phone": phone })
         alert(`Dodano ${name} do kontaktów.`)
 
-        appendContactList(phone, name)
-    }
-    else {
-        alert("podano nieprawidłowe dane")
+        displayContacts(contacts)
+
+        document.getElementById("name").value = ''
+        document.getElementById("phoneNumber").value = ''
     }
 }
 
-function appendContactList(phone, name) {
-    const contact = document.createElement("div")
+function displayContacts(contactsToDisplay) {
+    const contactList = document.getElementById("contactsList")
+    contactList.innerHTML = ''
+    contactsToDisplay.forEach(contact => {
+        const contactDiv = document.createElement("div")
+        contactDiv.classList = 'list-group-item'
+        contactDiv.textContent = `Name: ${contact.name}, phone number: ${contact.phone}`
 
-    contact.classList.add("contact")
-    contact.textContent = `${name} ${phone}`
+        const removeButton = document.createElement("button")
+        removeButton.textContent = "X"
+        removeButton.classList = "btn btn-danger float-right"
+        removeButton.addEventListener("click", () => removeContact(contact.name))
+        contactDiv.appendChild(removeButton)
 
-    contactList.appendChild(contact)
+        contactList.appendChild(contactDiv)
+    });
+}
+
+function searchContact(searchPhrase) {
+    const filteredContacts = contacts.filter(contact => contact.name.includes(searchPhrase) || contact.phone.includes(searchPhrase))
+
+    displayContacts(filteredContacts)
 }
 
 function dataIsInsertedCorrectly(name, phone) {
-    if (name.length < 3 || phone.length != 9) {
+    if (name.length < 3) {
+        alert("Contact name must be at least 3 characters long")
+        return false
+    }
+
+    if (phone.length !== 9) {
+        alert("Phone number must be 9 characters long")
+        return false
+    }
+
+    if (contacts.some(contact => contact.name === name || contact.phone === phone)) {
+        alert("Contact with this name or phone number already exits")
         return false
     }
 
     return true
 }
 
-function findContact() {
-    const searchValue = document.getElementById("search").value
-
-    const found = contacts.find((contact)=> contact.name.includes(searchValue) || contact.phone == searchValue)
+function removeContact(nameToMove) {
+    contacts = contacts.filter(contact => contact.name !== nameToMove)
+    displayContacts(contacts)
 }
