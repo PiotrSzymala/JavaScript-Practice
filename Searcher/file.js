@@ -1,8 +1,13 @@
 document.getElementById("search").addEventListener("click", saveSearch)
 document.getElementById("clear").addEventListener("click", clearHistory)
 
-let allSearches = JSON.parse(localStorage.getItem("recentSearches")) || []
+const getRecentSearches = () => JSON.parse(localStorage.getItem(recentSearchesKey)) || []
+
+const recentSearchesKey = "recentSearches"
+
+let allSearches = getRecentSearches()
 displaySearchHistory(allSearches)
+
 
 function saveSearch() {
     let searchValue = document.getElementById("input").value.trim()
@@ -12,10 +17,10 @@ function saveSearch() {
         return
     }
 
-    let recentSearchesList = JSON.parse(localStorage.getItem("recentSearches")) || []
+    let recentSearchesList = getRecentSearches()
 
     recentSearchesList.unshift(searchValue)
-    localStorage.setItem("recentSearches", JSON.stringify(recentSearchesList))
+    localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearchesList))
 
     searchValue = ""
 
@@ -35,6 +40,6 @@ function displaySearchHistory(searches) {
 }
 
 function clearHistory() {
-    localStorage.removeItem("recentSearches")
+    localStorage.removeItem(recentSearchesKey)
     displaySearchHistory([])
 }
