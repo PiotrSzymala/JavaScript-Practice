@@ -1,23 +1,25 @@
 document.getElementById("search").addEventListener("click", saveSearch)
 document.getElementById("clear").addEventListener("click", clearHistory)
 
+let allSearches = JSON.parse(localStorage.getItem("recentSearches")) || []
+displaySearchHistory(allSearches)
 
 function saveSearch() {
     let searchValue = document.getElementById("input").value.trim()
 
-    if(searchValue === ""){
+    if (searchValue === "") {
         alert("Wprowadz fraze do wyszukania")
         return
     }
 
-    let recentSearch = JSON.parse(localStorage.getItem("recentSearches")) || []
+    let recentSearchesList = JSON.parse(localStorage.getItem("recentSearches")) || []
 
-    recentSearch.unshift(searchValue)
-    localStorage.setItem("recentSearches", JSON.stringify(recentSearch))
+    recentSearchesList.unshift(searchValue)
+    localStorage.setItem("recentSearches", JSON.stringify(recentSearchesList))
 
     searchValue = ""
 
-    displaySearchHistory(recentSearch)
+    displaySearchHistory(recentSearchesList)
 }
 
 function displaySearchHistory(searches) {
@@ -32,10 +34,7 @@ function displaySearchHistory(searches) {
     });
 }
 
-function clearHistory(){
+function clearHistory() {
     localStorage.removeItem("recentSearches")
     displaySearchHistory([])
 }
-
-let recentSearch = JSON.parse(localStorage.getItem("recentSearches")) || []
-displaySearchHistory(recentSearch)
